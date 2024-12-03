@@ -67,7 +67,7 @@
                 <!-- Individual Results -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Individual Rankings</h2>
-                    <ResultsTable :results="examResults.individualResults" />
+                    <ResultsTable :results="examResults.individualResults" :is-chief-examiner="true" />
                 </div>
             </div>
         </div>
@@ -78,6 +78,7 @@
 import { calculateGrade } from '~/utils/grading'
 
 const route = useRoute()
+const user = useUser()
 const { data: examResults } = await useFetch(`/api/exams/${route.params.id}/results`)
 const getGrade = calculateGrade
 </script>

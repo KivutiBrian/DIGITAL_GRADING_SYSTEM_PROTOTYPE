@@ -35,6 +35,9 @@
                             Score</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade
                         </th>
+                        <th v-if="isChiefExaminer"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -81,10 +84,18 @@
                                 {{ getGrade(result.meanScore) }}
                             </span>
                         </td>
+                        <td v-if="isChiefExaminer" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button @click="editResult(result)" class="text-indigo-600 hover:text-indigo-900">
+                                Edit
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
+
+        <EditScoreModal v-if="selectedResult" :is-open="!!selectedResult" :result-id="selectedResult.id"
+            :initial-scores="selectedResult" @close="selectedResult = null" @update="handleResultUpdate" />
     </div>
 </template>
 
@@ -96,10 +107,15 @@ const props = defineProps({
     results: {
         type: Array,
         required: true
+    },
+    isChiefExaminer: {
+        type: Boolean,
+        default: false
     }
 })
 
 const searchQuery = ref('')
+const selectedResult = ref(null)
 const getGrade = calculateGrade
 
 const filteredResults = computed(() => {
@@ -108,4 +124,16 @@ const filteredResults = computed(() => {
         result.studentIndex.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
 })
+
+const editResult = (result) => {
+    selectedResult.value = result
+}
+
+const handleResultUpdate = (updatedResult) => {
+    const index = props.results.findIndex(r => r.id === updatedResult.id)
+    if (index !== -1) {
+        props.results[index] = updatedResult
+    }
+    selectedResult.value = null
+}
 </script>
